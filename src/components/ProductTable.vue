@@ -1,112 +1,5 @@
 <template>
   <div class="product-table">
-    <div class="flex justify-between items-center mb-4">
-      <div class="relative flex-1 mr-4">
-        <div
-          class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-        >
-          <svg
-            class="h-5 w-5 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clip-rule="evenodd"
-            />
-          </svg>
-        </div>
-        <input
-          type="text"
-          v-model="searchTerm"
-          placeholder="Buscar por SKU, nombre o descripción..."
-          class="search-input pl-10"
-          @input="handleSearch"
-        />
-      </div>
-      <button
-        @click="showDollarPrices"
-        class="dollar-btn"
-        :class="{ 'bg-green-600': showDollarInfo }"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 mr-2"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"
-          />
-          <path
-            fill-rule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        <span class="btn-text">Ver Precios Dólar</span>
-      </button>
-    </div>
-
-    <div v-if="showDollarInfo" class="dollar-info mb-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div class="dollar-card bg-blue-50">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="dollar-title">Dólar Oficial</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-blue-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-6h6m6 1a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <p class="dollar-price">
-            {{ formatPrice(dollarPrices.oficial.precio) }}
-          </p>
-          <p class="dollar-date">
-            Actualizado:
-            {{ formatDate(dollarPrices.oficial.fechaActualizacion) }}
-          </p>
-        </div>
-        <div class="dollar-card bg-green-50">
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="dollar-title">Dólar Paralelo</h3>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-green-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
-          <p class="dollar-price">
-            {{ formatPrice(dollarPrices.paralelo.precio) }}
-          </p>
-          <p class="dollar-date">
-            Actualizado:
-            {{ formatDate(dollarPrices.paralelo.fechaActualizacion) }}
-          </p>
-        </div>
-      </div>
-    </div>
-
     <div class="w-full overflow-x-auto">
       <table class="w-full divide-y divide-gray-200 shadow-sm rounded-lg">
         <thead class="bg-gray-50">
@@ -155,7 +48,7 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
-            v-for="product in filteredProducts"
+            v-for="product in props.products"
             :key="product.id"
             class="hover:bg-gray-50 transition-colors duration-150"
           >
@@ -218,23 +111,66 @@
                   </svg>
                   <span class="btn-text">Editar</span>
                 </button>
-                <button @click="verPrecios(product)" class="view-prices-btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                <div class="relative inline-block">
+                  <button
+                    @click="verPrecios(product.id, $event)"
+                    class="view-prices-btn"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M15 9a2 2 0 10-4 0v5a2 2 0 01-2 2h6m-6-4h4m8 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span class="btn-text">Ver Precios</span>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15 9a2 2 0 10-4 0v5a2 2 0 01-2 2h6m-6-4h4m8 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span class="btn-text">Ver Precios</span>
+                  </button>
+                  <div
+                    v-if="activePopover === product.id"
+                    class="prices-popover"
+                    :style="{
+                      position: 'fixed',
+                      top: popoverPosition.top + 'px',
+                      left: popoverPosition.left + 'px',
+                      transform: 'translateY(-100%)',
+                    }"
+                    @mouseleave="activePopover = null"
+                  >
+                    <div class="prices-content">
+                      <div class="price-row">
+                        <span class="price-label">Costo:</span>
+                        <span class="price-value">{{
+                          formatPrice(product.costo_actual)
+                        }}</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-label">Precio 1:</span>
+                        <span class="price-value">{{
+                          formatPrice(product.precio_1)
+                        }}</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-label">Precio 2:</span>
+                        <span class="price-value">{{
+                          formatPrice(product.precio_2)
+                        }}</span>
+                      </div>
+                      <div class="price-row">
+                        <span class="price-label">Precio 3:</span>
+                        <span class="price-value">{{
+                          formatPrice(product.precio_3)
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <button @click="confirmDelete(product.id)" class="delete-btn">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -259,7 +195,7 @@
       </table>
     </div>
 
-    <div v-if="filteredProducts.length === 0" class="empty-state">
+    <div v-if="props.products.length === 0" class="empty-state">
       <svg
         class="h-12 w-12 text-gray-400"
         xmlns="http://www.w3.org/2000/svg"
@@ -285,7 +221,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const props = defineProps({
@@ -297,34 +233,8 @@ const props = defineProps({
 
 const emit = defineEmits(["delete"]);
 const router = useRouter();
-const searchTerm = ref("");
-const showDollarInfo = ref(false);
-const dollarPrices = ref({
-  oficial: {
-    precio: 0,
-    fechaActualizacion: "",
-  },
-  paralelo: {
-    precio: 0,
-    fechaActualizacion: "",
-  },
-});
-
-const filteredProducts = computed(() => {
-  if (!searchTerm.value) return props.products;
-
-  const term = searchTerm.value.toLowerCase();
-  return props.products.filter(
-    (product) =>
-      product.sku.toLowerCase().includes(term) ||
-      product.nombre.toLowerCase().includes(term) ||
-      (product.descripcion && product.descripcion.toLowerCase().includes(term))
-  );
-});
-
-const handleSearch = () => {
-  // La búsqueda se maneja automáticamente a través del computed filteredProducts
-};
+const activePopover = ref(null);
+const popoverPosition = ref({ top: 0, left: 0 });
 
 const editProduct = (id) => {
   router.push(`/editar/${id}`);
@@ -343,93 +253,31 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const stockStatusClass = (stock) => {
   if (stock <= 0) return "stock-out";
   if (stock <= 10) return "stock-low";
   return "stock-ok";
 };
 
-const calcularMargen = (precioCompra, precioVenta) => {
-  const margen = ((precioVenta - precioCompra) / precioCompra) * 100;
-  return margen.toFixed(1);
-};
-
-const margenClass = (precioCompra, precioVenta) => {
-  const margen = ((precioVenta - precioCompra) / precioCompra) * 100;
-  if (margen <= 10) return "margen-bajo";
-  if (margen <= 30) return "margen-medio";
-  return "margen-alto";
-};
-
-const fetchDollarPrices = async () => {
-  try {
-    console.log("Obteniendo precios del dólar...");
-    const response = await fetch("http://localhost:3001/dolar");
-    console.log("Respuesta recibida:", response);
-
-    if (!response.ok) {
-      throw new Error(
-        `Error al obtener los precios del dólar: ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-    console.log("Datos recibidos:", data);
-
-    dollarPrices.value = {
-      oficial: {
-        precio: data.oficial.precio,
-        fechaActualizacion: data.oficial.fechaActualizacion,
-      },
-      paralelo: {
-        precio: data.paralelo.precio,
-        fechaActualizacion: data.paralelo.fechaActualizacion,
-      },
-    };
-
-    console.log("Precios actualizados:", dollarPrices.value);
-  } catch (error) {
-    console.error("Error al obtener precios del dólar:", error);
-    // Mostrar mensaje de error al usuario
-    alert(
-      "Error al obtener los precios del dólar. Por favor, intente nuevamente."
-    );
+const verPrecios = (productId, event) => {
+  if (activePopover.value === productId) {
+    activePopover.value = null;
+    return;
   }
-};
 
-const showDollarPrices = async () => {
-  if (!showDollarInfo.value) {
-    await fetchDollarPrices();
-  }
-  showDollarInfo.value = !showDollarInfo.value;
-};
-
-const verPrecios = (product) => {
-  // Aquí puedes implementar la lógica para mostrar los precios
-  alert(
-    `Precios del producto ${product.nombre}:\n\nPrecio 1: ${formatPrice(
-      product.precio_1
-    )}\nPrecio 2: ${formatPrice(product.precio_2)}\nPrecio 3: ${formatPrice(
-      product.precio_3
-    )}`
-  );
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();
+  popoverPosition.value = {
+    top: rect.top - 10,
+    left: rect.left,
+  };
+  activePopover.value = productId;
 };
 </script>
 
 <style scoped>
 .product-table {
-  @apply overflow-x-auto rounded-lg border border-gray-200;
+  @apply overflow-x-auto rounded-lg;
 }
 
 .search-input {
@@ -516,5 +364,35 @@ tr {
 
 .dollar-date {
   @apply text-xs text-gray-500 mt-2;
+}
+
+.prices-popover {
+  @apply z-[9999] bg-white rounded-lg shadow-lg border border-gray-200;
+  width: 200px;
+}
+
+.relative.inline-block {
+  position: relative;
+  display: inline-block;
+}
+
+.prices-content {
+  @apply p-3;
+}
+
+.price-row {
+  @apply flex justify-between items-center py-1;
+}
+
+.price-row:not(:last-child) {
+  @apply border-b border-gray-100;
+}
+
+.price-label {
+  @apply text-sm text-gray-600 font-medium;
+}
+
+.price-value {
+  @apply text-sm text-gray-900 font-mono font-bold;
 }
 </style>
