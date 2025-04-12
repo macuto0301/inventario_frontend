@@ -192,6 +192,8 @@ const router = useRouter();
 const error = ref("");
 const loading = ref(false);
 
+const emit = defineEmits(["product-added"]);
+
 const product = ref({
   sku: "",
   nombre: "",
@@ -223,8 +225,8 @@ const handleSubmit = async () => {
       );
     }
 
-    await productService.createProduct(product.value);
-    router.push("/productos");
+    const newProduct = await productService.createProduct(product.value);
+    emit("product-added", newProduct);
   } catch (err) {
     error.value = err.message || "Error al crear el producto";
   } finally {

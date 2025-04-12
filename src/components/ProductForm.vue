@@ -423,7 +423,7 @@ const handleSubmit = async () => {
 
     await productService.createProduct(form);
     emit("success");
-    router.push("/productos");
+    router.push("/");
   } catch (err) {
     error.value = err.message;
   }

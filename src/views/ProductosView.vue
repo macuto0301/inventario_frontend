@@ -35,7 +35,7 @@
         <h3
           class="text-sm font-semibold text-blue-900 uppercase tracking-wider mb-2"
         >
-          Valor Total de Compra
+          Valor Total de Venta en Bs.
         </h3>
         <p class="text-3xl font-bold text-blue-900">
           {{ totalValue ? formatPrice(totalValue.totalCompra) : "..." }}
@@ -48,7 +48,7 @@
         <h3
           class="text-sm font-semibold text-green-900 uppercase tracking-wider mb-2"
         >
-          Valor Total de Venta
+          Valor Total de Venta en $
         </h3>
         <p class="text-3xl font-bold text-green-900">
           {{ totalValue ? formatPrice(totalValue.totalVenta) : "..." }}
