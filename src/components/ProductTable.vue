@@ -113,7 +113,7 @@
                 </button>
                 <div class="relative inline-block">
                   <button
-                    @click="verPrecios(product.id, $event)"
+                    @click="verPrecios(product, $event)"
                     class="view-prices-btn"
                   >
                     <svg
@@ -152,21 +152,47 @@
                       </div>
                       <div class="price-row">
                         <span class="price-label">Precio 1:</span>
-                        <span class="price-value">{{
-                          formatPrice(product.precio_1)
-                        }}</span>
+                        <div class="price-input-container">
+                          <input
+                            type="number"
+                            v-model="editingPrices.precio_1"
+                            class="price-input"
+                          />
+                        </div>
                       </div>
                       <div class="price-row">
                         <span class="price-label">Precio 2:</span>
-                        <span class="price-value">{{
-                          formatPrice(product.precio_2)
-                        }}</span>
+                        <div class="price-input-container">
+                          <input
+                            type="number"
+                            v-model="editingPrices.precio_2"
+                            class="price-input"
+                          />
+                        </div>
                       </div>
                       <div class="price-row">
                         <span class="price-label">Precio 3:</span>
-                        <span class="price-value">{{
-                          formatPrice(product.precio_3)
-                        }}</span>
+                        <div class="price-input-container">
+                          <input
+                            type="number"
+                            v-model="editingPrices.precio_3"
+                            class="price-input"
+                          />
+                        </div>
+                      </div>
+                      <div class="actions-row">
+                        <button
+                          @click="guardarPrecios(product)"
+                          class="save-btn"
+                        >
+                          Guardar
+                        </button>
+                        <button
+                          @click="activePopover = null"
+                          class="cancel-btn"
+                        >
+                          Cancelar
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -231,10 +257,15 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["delete"]);
+const emit = defineEmits(["delete", "update-prices"]);
 const router = useRouter();
 const activePopover = ref(null);
 const popoverPosition = ref({ top: 0, left: 0 });
+const editingPrices = ref({
+  precio_1: 0,
+  precio_2: 0,
+  precio_3: 0,
+});
 
 const editProduct = (id) => {
   router.push(`/editar/${id}`);
@@ -259,8 +290,8 @@ const stockStatusClass = (stock) => {
   return "stock-ok";
 };
 
-const verPrecios = (productId, event) => {
-  if (activePopover.value === productId) {
+const verPrecios = (product, event) => {
+  if (activePopover.value === product.id) {
     activePopover.value = null;
     return;
   }
@@ -271,7 +302,28 @@ const verPrecios = (productId, event) => {
     top: rect.top - 10,
     left: rect.left,
   };
-  activePopover.value = productId;
+
+  editingPrices.value = {
+    precio_1: product.precio_1,
+    precio_2: product.precio_2,
+    precio_3: product.precio_3,
+  };
+
+  activePopover.value = product.id;
+};
+
+const guardarPrecios = (product) => {
+  const precios = {
+    precio_1: Number(editingPrices.value.precio_1),
+    precio_2: Number(editingPrices.value.precio_2),
+    precio_3: Number(editingPrices.value.precio_3),
+  };
+
+  emit("update-prices", {
+    id: product.id,
+    precios,
+  });
+  activePopover.value = null;
 };
 </script>
 
@@ -368,7 +420,7 @@ tr {
 
 .prices-popover {
   @apply z-[9999] bg-white rounded-lg shadow-lg border border-gray-200;
-  width: 200px;
+  width: 250px;
 }
 
 .relative.inline-block {
@@ -394,5 +446,25 @@ tr {
 
 .price-value {
   @apply text-sm text-gray-900 font-mono font-bold;
+}
+
+.price-input-container {
+  @apply flex items-center;
+}
+
+.price-input {
+  @apply w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+}
+
+.actions-row {
+  @apply flex justify-end space-x-2 mt-3 pt-2 border-t border-gray-100;
+}
+
+.save-btn {
+  @apply px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+.cancel-btn {
+  @apply px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
 }
 </style>
