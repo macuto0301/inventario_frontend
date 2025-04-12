@@ -107,171 +107,157 @@
       </div>
     </div>
 
-    <table
-      class="min-w-full divide-y divide-gray-200 shadow-sm rounded-lg overflow-hidden"
-    >
-      <thead class="bg-gray-50">
-        <tr>
-          <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            SKU
-          </th>
-          <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Nombre
-          </th>
-          <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Descripción
-          </th>
-          <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Marca
-          </th>
-          <th
-            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Referencia
-          </th>
-          <th
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Stock
-          </th>
-          <th
-            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Costo Actual
-          </th>
-          <th
-            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Precio 1
-          </th>
-          <th
-            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Precio 2
-          </th>
-          <th
-            class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Precio 3
-          </th>
-          <th
-            class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-          >
-            Acciones
-          </th>
-        </tr>
-      </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        <tr
-          v-for="product in filteredProducts"
-          :key="product.id"
-          class="hover:bg-gray-50 transition-colors duration-150"
-        >
-          <td
-            class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900"
-          >
-            {{ product.sku }}
-          </td>
-          <td
-            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
-          >
-            {{ product.nombre }}
-          </td>
-          <td
-            class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate"
-            :title="product.descripcion"
-          >
-            {{ product.descripcion }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ product.marca }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-            {{ product.referencia }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-            <span
-              :class="[
-                'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                stockStatusClass(product.stock) === 'stock-out'
-                  ? 'bg-red-100 text-red-800'
-                  : stockStatusClass(product.stock) === 'stock-low'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : 'bg-green-100 text-green-800',
-              ]"
+    <div class="w-full overflow-x-auto">
+      <table class="w-full divide-y divide-gray-200 shadow-sm rounded-lg">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
             >
-              {{ product.stock }}
-            </span>
-          </td>
-          <td
-            class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 text-right"
+              SKU
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Nombre
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Descripción
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Marca
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Referencia
+            </th>
+            <th
+              class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Stock
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Precio
+            </th>
+            <th
+              class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+            >
+              Acciones
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr
+            v-for="product in filteredProducts"
+            :key="product.id"
+            class="hover:bg-gray-50 transition-colors duration-150"
           >
-            {{ formatPrice(product.costo_actual) }}
-          </td>
-          <td
-            class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-blue-600 text-right"
-          >
-            {{ formatPrice(product.precio_1) }}
-          </td>
-          <td
-            class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 text-right"
-          >
-            {{ formatPrice(product.precio_2) }}
-          </td>
-          <td
-            class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 text-right"
-          >
-            {{ formatPrice(product.precio_3) }}
-          </td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
-            <div class="flex justify-center space-x-2">
-              <button @click="editProduct(product.id)" class="edit-btn">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                  />
-                </svg>
-                <span class="btn-text">Editar</span>
-              </button>
-              <button @click="confirmDelete(product.id)" class="delete-btn">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                  />
-                </svg>
-                <span class="btn-text">Eliminar</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900"
+            >
+              {{ product.sku }}
+            </td>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+            >
+              {{ product.nombre }}
+            </td>
+            <td
+              class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate"
+              :title="product.descripcion"
+            >
+              {{ product.descripcion }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ product.marca }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              {{ product.referencia }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+              <span
+                :class="[
+                  'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                  stockStatusClass(product.stock) === 'stock-out'
+                    ? 'bg-red-100 text-red-800'
+                    : stockStatusClass(product.stock) === 'stock-low'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-green-100 text-green-800',
+                ]"
+                >{{ product.stock }}</span
+              >
+            </td>
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-blue-600 text-right"
+            >
+              {{ formatPrice(product.precio_1) }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+              <div class="flex justify-center space-x-2">
+                <button @click="editProduct(product.id)" class="edit-btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    />
+                  </svg>
+                  <span class="btn-text">Editar</span>
+                </button>
+                <button @click="verPrecios(product)" class="view-prices-btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 9a2 2 0 10-4 0v5a2 2 0 01-2 2h6m-6-4h4m8 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span class="btn-text">Ver Precios</span>
+                </button>
+                <button @click="confirmDelete(product.id)" class="delete-btn">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <div v-if="filteredProducts.length === 0" class="empty-state">
       <svg
@@ -428,6 +414,17 @@ const showDollarPrices = async () => {
   }
   showDollarInfo.value = !showDollarInfo.value;
 };
+
+const verPrecios = (product) => {
+  // Aquí puedes implementar la lógica para mostrar los precios
+  alert(
+    `Precios del producto ${product.nombre}:\n\nPrecio 1: ${formatPrice(
+      product.precio_1
+    )}\nPrecio 2: ${formatPrice(product.precio_2)}\nPrecio 3: ${formatPrice(
+      product.precio_3
+    )}`
+  );
+};
 </script>
 
 <style scoped>
@@ -460,12 +457,17 @@ tr {
 }
 
 .edit-btn,
-.delete-btn {
+.delete-btn,
+.view-prices-btn {
   @apply inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200;
 }
 
 .edit-btn {
   @apply bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.view-prices-btn {
+  @apply bg-green-600 hover:bg-green-700 focus:ring-green-500;
 }
 
 .delete-btn {

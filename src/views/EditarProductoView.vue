@@ -244,7 +244,7 @@ const handleSubmit = async () => {
     }
 
     await productService.updateProduct(route.params.id, product.value);
-    router.push("/productos");
+    router.push("/");
   } catch (err) {
     error.value = err.message || "Error al actualizar el producto";
   } finally {
