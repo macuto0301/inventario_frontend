@@ -94,23 +94,136 @@
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
               <div class="flex justify-center space-x-2">
-                <button @click="editProduct(product.id)" class="edit-btn">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+                <div class="relative inline-block">
+                  <button
+                    @click="editProduct(product, $event)"
+                    class="edit-btn"
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                    />
-                  </svg>
-                  <span class="btn-text">Editar</span>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                    <span class="btn-text">Editar</span>
+                  </button>
+                  <div
+                    v-if="activeEditPopover === product.id"
+                    class="edit-popover-overlay"
+                    @click.self="activeEditPopover = null"
+                  >
+                    <div class="edit-popover-centered">
+                      <div class="edit-content">
+                        <h3 class="edit-title">Editar Producto</h3>
+                        <div class="edit-grid">
+                          <div class="edit-row">
+                            <span class="edit-label">SKU</span>
+                            <input
+                              type="text"
+                              v-model="editingProduct.sku"
+                              class="edit-input-readonly"
+                              readonly
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Costo</span>
+                            <input
+                              type="number"
+                              v-model="editingProduct.costo_actual"
+                              class="edit-input-numeric"
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Nombre</span>
+                            <input
+                              type="text"
+                              v-model="editingProduct.nombre"
+                              class="edit-input"
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Precio 1</span>
+                            <input
+                              type="number"
+                              v-model="editingProduct.precio_1"
+                              class="edit-input-numeric"
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Marca</span>
+                            <input
+                              type="text"
+                              v-model="editingProduct.marca"
+                              class="edit-input"
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Precio 2</span>
+                            <input
+                              type="number"
+                              v-model="editingProduct.precio_2"
+                              class="edit-input-numeric"
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Referencia</span>
+                            <input
+                              type="text"
+                              v-model="editingProduct.referencia"
+                              class="edit-input"
+                            />
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Precio 3</span>
+                            <input
+                              type="number"
+                              v-model="editingProduct.precio_3"
+                              class="edit-input-numeric"
+                            />
+                          </div>
+                          <div class="edit-row col-span-2">
+                            <span class="edit-label">Descripción</span>
+                            <textarea
+                              v-model="editingProduct.descripcion"
+                              class="edit-textarea"
+                              rows="3"
+                            ></textarea>
+                          </div>
+                          <div class="edit-row">
+                            <span class="edit-label">Stock</span>
+                            <input
+                              type="number"
+                              v-model="editingProduct.stock"
+                              class="edit-input"
+                            />
+                          </div>
+                        </div>
+                        <div class="actions-row">
+                          <button
+                            @click="guardarProducto(product)"
+                            class="save-btn"
+                          >
+                            Guardar
+                          </button>
+                          <button
+                            @click="activeEditPopover = null"
+                            class="cancel-btn"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="relative inline-block">
                   <button
                     @click="verPrecios(product, $event)"
@@ -257,18 +370,55 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["delete", "update-prices"]);
+const emit = defineEmits(["delete", "update-prices", "update-product"]);
 const router = useRouter();
 const activePopover = ref(null);
+const activeEditPopover = ref(null);
 const popoverPosition = ref({ top: 0, left: 0 });
 const editingPrices = ref({
   precio_1: 0,
   precio_2: 0,
   precio_3: 0,
 });
+const editingProduct = ref({
+  sku: "",
+  nombre: "",
+  descripcion: "",
+  marca: "",
+  referencia: "",
+  stock: 0,
+  costo_actual: 0,
+  precio_1: 0,
+  precio_2: 0,
+  precio_3: 0,
+});
 
-const editProduct = (id) => {
-  router.push(`/editar/${id}`);
+const editProduct = (product, event) => {
+  if (activeEditPopover.value === product.id) {
+    activeEditPopover.value = null;
+    return;
+  }
+
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const popoverWidth = 350;
+  const popoverHeight = 600;
+
+  popoverPosition.value = {
+    top: (windowHeight - popoverHeight) / 2,
+    left: (windowWidth - popoverWidth) / 2,
+  };
+
+  editingProduct.value = { ...product };
+  activeEditPopover.value = product.id;
+};
+
+const guardarProducto = (product) => {
+  emit("update-product", {
+    id: product.id,
+    data: { ...editingProduct.value },
+  });
+  activeEditPopover.value = null;
 };
 
 const confirmDelete = async (id) => {
@@ -466,5 +616,85 @@ tr {
 
 .cancel-btn {
   @apply px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+.edit-popover-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] backdrop-blur-sm;
+}
+
+.edit-popover-centered {
+  @apply bg-white rounded-xl shadow-2xl border border-gray-200;
+  width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.edit-content {
+  @apply p-6;
+}
+
+.edit-title {
+  @apply text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200 flex items-center;
+}
+
+.edit-title::before {
+  content: "";
+  @apply w-1 h-6 bg-blue-600 rounded mr-3;
+}
+
+.edit-grid {
+  @apply grid grid-cols-2 gap-6;
+}
+
+.edit-row {
+  @apply flex flex-col space-y-1;
+}
+
+.edit-label {
+  @apply text-sm font-medium text-gray-700 flex items-center;
+}
+
+.edit-label::after {
+  content: ":";
+  @apply text-gray-400 ml-1;
+}
+
+.edit-input {
+  @apply w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+}
+
+.edit-input-readonly {
+  @apply w-full px-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed;
+}
+
+.edit-input-numeric {
+  @apply w-36 px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200;
+}
+
+.edit-textarea {
+  @apply w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-200;
+  min-height: 100px;
+}
+
+.actions-row {
+  @apply flex justify-end space-x-4 mt-8 pt-6 border-t border-gray-200;
+}
+
+.save-btn {
+  @apply px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center;
+}
+
+.save-btn::before {
+  content: "✓";
+  @apply mr-2;
+}
+
+.cancel-btn {
+  @apply px-6 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 flex items-center;
+}
+
+.cancel-btn::before {
+  content: "×";
+  @apply mr-2;
 }
 </style>

@@ -149,7 +149,13 @@
         </div>
       </div>
 
-      <ProductTable v-else :products="products" @delete="handleDelete" />
+      <ProductTable
+        v-else
+        :products="products"
+        @delete="handleDelete"
+        @update-prices="handleUpdatePrices"
+        @update-product="handleUpdateProduct"
+      />
     </div>
   </div>
 </template>
@@ -200,6 +206,28 @@ const handleDelete = async (id) => {
     await loadProducts(searchTerm.value);
   } catch (err) {
     error.value = "Error al eliminar el producto: " + err.message;
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleUpdateProduct = async (data) => {
+  try {
+    loading.value = true;
+    error.value = null;
+
+    await productService.updateProduct(data.id, data.data);
+
+    // Actualizar el producto en la lista local
+    const index = products.value.findIndex((p) => p.id === data.id);
+    if (index !== -1) {
+      products.value[index] = {
+        ...products.value[index],
+        ...data.data,
+      };
+    }
+  } catch (err) {
+    error.value = "Error al actualizar el producto: " + err.message;
   } finally {
     loading.value = false;
   }
