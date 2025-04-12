@@ -296,6 +296,69 @@
         </div>
       </div>
     </div>
+
+    <!-- Popover de confirmación -->
+    <div v-if="showConfirmation" class="confirmation-overlay">
+      <div class="confirmation-popover">
+        <h3 class="confirmation-title">Confirmar Producto</h3>
+        <div class="confirmation-content">
+          <div class="confirmation-row">
+            <span class="confirmation-label">SKU:</span>
+            <span class="confirmation-value">{{ form.sku }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Nombre:</span>
+            <span class="confirmation-value">{{ form.nombre }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Descripción:</span>
+            <span class="confirmation-value">{{ form.descripcion }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Marca:</span>
+            <span class="confirmation-value">{{ form.marca }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Referencia:</span>
+            <span class="confirmation-value">{{ form.referencia }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Stock:</span>
+            <span class="confirmation-value">{{ form.stock }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Costo:</span>
+            <span class="confirmation-value">{{
+              formatPrice(form.costoActual)
+            }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Precio 1:</span>
+            <span class="confirmation-value">{{
+              formatPrice(form.precio1)
+            }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Precio 2:</span>
+            <span class="confirmation-value">{{
+              formatPrice(form.precio2)
+            }}</span>
+          </div>
+          <div class="confirmation-row">
+            <span class="confirmation-label">Precio 3:</span>
+            <span class="confirmation-value">{{
+              formatPrice(form.precio3)
+            }}</span>
+          </div>
+        </div>
+        <div class="confirmation-actions">
+          <button @click="confirmSubmit" class="confirm-button">
+            Confirmar
+          </button>
+          <button @click="cancelSubmit" class="cancel-button">Cancelar</button>
+        </div>
+      </div>
+    </div>
   </form>
 </template>
 
@@ -308,6 +371,7 @@ const router = useRouter();
 const emit = defineEmits(["success", "error"]);
 const error = ref("");
 const activePriceTab = ref(1);
+const showConfirmation = ref(false);
 
 const form = reactive({
   sku: "",
@@ -418,15 +482,44 @@ const validarForm = () => {
 };
 
 const handleSubmit = async () => {
-  try {
-    if (!validarForm()) return;
+  showConfirmation.value = true;
+};
 
-    await productService.createProduct(form);
-    emit("success");
-    router.push("/productos");
-  } catch (err) {
-    error.value = err.message;
+const confirmSubmit = async () => {
+  try {
+    const product = {
+      sku: form.sku,
+      nombre: form.nombre,
+      descripcion: form.descripcion,
+      marca: form.marca,
+      referencia: form.referencia,
+      stock: form.stock,
+      costo_actual: form.costoActual,
+      precio_1: form.precio1,
+      precio_2: form.precio2,
+      precio_3: form.precio3,
+    };
+
+    await productService.createProduct(product);
+    showConfirmation.value = false;
+    resetForm();
+    emit("success", "Producto agregado exitosamente");
+  } catch (error) {
+    console.error("Error al crear el producto:", error);
+    emit("error", error.message || "Error al crear el producto");
   }
+};
+
+const cancelSubmit = () => {
+  showConfirmation.value = false;
+};
+
+const resetForm = () => {
+  // Implementa la lógica para reiniciar el formulario
+};
+
+const formatPrice = (value) => {
+  return `$${value.toFixed(2)}`;
 };
 </script>
 
@@ -477,5 +570,54 @@ input[type="number"]::-webkit-inner-spin-button {
 
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+.confirmation-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] backdrop-blur-sm;
+}
+
+.confirmation-popover {
+  @apply bg-white rounded-xl shadow-2xl border border-gray-200;
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.confirmation-title {
+  @apply text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200 flex items-center;
+}
+
+.confirmation-title::before {
+  content: "";
+  @apply w-1 h-6 bg-blue-600 rounded mr-3;
+}
+
+.confirmation-content {
+  @apply p-6;
+}
+
+.confirmation-row {
+  @apply flex justify-between items-center py-2 border-b border-gray-100;
+}
+
+.confirmation-label {
+  @apply text-sm font-medium text-gray-600;
+}
+
+.confirmation-value {
+  @apply text-sm text-gray-900;
+}
+
+.confirmation-actions {
+  @apply flex justify-end space-x-4 mt-6 pt-4 border-t border-gray-200;
+}
+
+.confirm-button {
+  @apply px-6 py-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200;
+}
+
+.cancel-button {
+  @apply px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300
+         hover:bg-gray-50 focus:ring-gray-500;
 }
 </style>
