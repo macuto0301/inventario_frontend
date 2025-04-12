@@ -265,47 +265,21 @@
                       </div>
                       <div class="price-row">
                         <span class="price-label">Precio 1:</span>
-                        <div class="price-input-container">
-                          <input
-                            type="number"
-                            v-model="editingPrices.precio_1"
-                            class="price-input"
-                          />
-                        </div>
+                        <span class="price-value">{{
+                          formatPrice(product.precio_1)
+                        }}</span>
                       </div>
                       <div class="price-row">
                         <span class="price-label">Precio 2:</span>
-                        <div class="price-input-container">
-                          <input
-                            type="number"
-                            v-model="editingPrices.precio_2"
-                            class="price-input"
-                          />
-                        </div>
+                        <span class="price-value">{{
+                          formatPrice(product.precio_2)
+                        }}</span>
                       </div>
                       <div class="price-row">
                         <span class="price-label">Precio 3:</span>
-                        <div class="price-input-container">
-                          <input
-                            type="number"
-                            v-model="editingPrices.precio_3"
-                            class="price-input"
-                          />
-                        </div>
-                      </div>
-                      <div class="actions-row">
-                        <button
-                          @click="guardarPrecios(product)"
-                          class="save-btn"
-                        >
-                          Guardar
-                        </button>
-                        <button
-                          @click="activePopover = null"
-                          class="cancel-btn"
-                        >
-                          Cancelar
-                        </button>
+                        <span class="price-value">{{
+                          formatPrice(product.precio_3)
+                        }}</span>
                       </div>
                     </div>
                   </div>
@@ -570,7 +544,7 @@ tr {
 
 .prices-popover {
   @apply z-[9999] bg-white rounded-lg shadow-lg border border-gray-200;
-  width: 250px;
+  width: 200px;
 }
 
 .relative.inline-block {
@@ -579,11 +553,11 @@ tr {
 }
 
 .prices-content {
-  @apply p-3;
+  @apply p-4;
 }
 
 .price-row {
-  @apply flex justify-between items-center py-1;
+  @apply flex justify-between items-center py-2;
 }
 
 .price-row:not(:last-child) {
