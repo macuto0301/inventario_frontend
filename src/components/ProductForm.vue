@@ -377,14 +377,14 @@ const form = reactive({
   modelo: "",
   marca: "",
   referencia: "",
-  costoAnterior: null,
-  costoActual: null,
-  utilidad1: null,
-  precio1: null,
-  utilidad2: null,
-  precio2: null,
-  utilidad3: null,
-  precio3: null,
+  costoAnterior: 0,
+  costoActual: 0,
+  utilidad1: 30,
+  precio1: 0,
+  utilidad2: 25,
+  precio2: 0,
+  utilidad3: 20,
+  precio3: 0,
   stock: 0,
 });
 
@@ -416,12 +416,14 @@ const recalcularPrecios = () => {
     form.precio1 = 0;
     form.precio2 = 0;
     form.precio3 = 0;
+    form.costoAnterior = 0;
     return;
   }
 
   form.precio1 = calcularPrecio(form.costoActual, form.utilidad1);
   form.precio2 = calcularPrecio(form.costoActual, form.utilidad2);
   form.precio3 = calcularPrecio(form.costoActual, form.utilidad3);
+  form.costoAnterior = form.costoActual;
 };
 
 const calcularPrecio1 = () => {
@@ -520,13 +522,15 @@ const resetForm = () => {
   form.marca = "";
   form.referencia = "";
   form.stock = 0;
-  form.costoActual = null;
-  form.precio1 = null;
-  form.precio2 = null;
-  form.precio3 = null;
-  form.utilidad1 = null;
-  form.utilidad2 = null;
-  form.utilidad3 = null;
+  form.modelo = "";
+  form.costoAnterior = 0;
+  form.costoActual = 0;
+  form.precio1 = 0;
+  form.precio2 = 0;
+  form.precio3 = 0;
+  form.utilidad1 = 30;
+  form.utilidad2 = 25;
+  form.utilidad3 = 20;
   error.value = "";
 };
 
