@@ -285,12 +285,8 @@
         </div>
 
         <div class="flex justify-end space-x-3 mt-8 pt-6 border-t">
-          <button
-            type="button"
-            @click="$router.push('/')"
-            class="btn btn-ghost"
-          >
-            Cancelar
+          <button type="button" @click="resetForm" class="btn btn-ghost">
+            Limpiar
           </button>
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
@@ -487,6 +483,8 @@ const handleSubmit = async () => {
 
 const confirmSubmit = async () => {
   try {
+    if (!validarForm()) return;
+
     const product = {
       sku: form.sku,
       nombre: form.nombre,
@@ -515,7 +513,20 @@ const cancelSubmit = () => {
 };
 
 const resetForm = () => {
-  // Implementa la lógica para reiniciar el formulario
+  form.sku = "";
+  form.nombre = "";
+  form.descripcion = "";
+  form.marca = "";
+  form.referencia = "";
+  form.stock = 0;
+  form.costoActual = null;
+  form.precio1 = null;
+  form.precio2 = null;
+  form.precio3 = null;
+  form.utilidad1 = null;
+  form.utilidad2 = null;
+  form.utilidad3 = null;
+  error.value = "";
 };
 
 const formatPrice = (value) => {
