@@ -9,15 +9,24 @@
 <script setup>
 import { useRouter } from "vue-router";
 import ProductForm from "../components/ProductForm.vue";
+import { ref } from "vue";
 
 const router = useRouter();
+const success = ref("");
+const error = ref("");
 
-const handleSuccess = () => {
-  router.push("/productos");
+const handleSuccess = (message) => {
+  success.value = message;
+  setTimeout(() => {
+    success.value = "";
+  }, 3000);
 };
 
-const handleError = (error) => {
-  alert(error);
+const handleError = (message) => {
+  error.value = message;
+  setTimeout(() => {
+    error.value = "";
+  }, 3000);
 };
 </script>
 

@@ -1,5 +1,19 @@
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3001/productos";
+const API_URL = import.meta.env.VITE_API_URL;
+
+const DOLLAR_URL = import.meta.env.VITE_DOLLAR_URL;
+
+const getDollarPrices = async () => {
+  try {
+    const response = await fetch(DOLLAR_URL);
+    if (!response.ok) {
+      throw new Error("Error al obtener los precios del dólar");
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getDollarPrices:", error);
+    throw error;
+  }
+};
 
 export const productService = {
   // Get all products with optional search term
@@ -184,4 +198,6 @@ export const productService = {
       throw error;
     }
   },
+
+  getDollarPrices,
 };

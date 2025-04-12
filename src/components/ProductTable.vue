@@ -26,45 +26,28 @@
           @input="handleSearch"
         />
       </div>
-      <div class="flex space-x-2">
-        <button @click="showAddModal = true" class="add-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span class="btn-text">Agregar Producto</span>
-        </button>
-        <button
-          @click="showDollarPrices"
-          class="dollar-btn"
-          :class="{ 'bg-green-600': showDollarInfo }"
+      <button
+        @click="showDollarPrices"
+        class="dollar-btn"
+        :class="{ 'bg-green-600': showDollarInfo }"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5 mr-2"
+          viewBox="0 0 20 20"
+          fill="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"
-            />
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          <span class="btn-text">Ver Precios Dólar</span>
-        </button>
-      </div>
+          <path
+            d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"
+          />
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span class="btn-text">Ver Precios Dólar</span>
+      </button>
     </div>
 
     <div v-if="showDollarInfo" class="dollar-info mb-4">
@@ -224,8 +207,9 @@
                   ? 'bg-yellow-100 text-yellow-800'
                   : 'bg-green-100 text-green-800',
               ]"
-              >{{ product.stock }}</span
             >
+              {{ product.stock }}
+            </span>
           </td>
           <td
             class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 text-right"
@@ -249,7 +233,7 @@
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
             <div class="flex justify-center space-x-2">
-              <button @click="editProduct(product)" class="edit-btn">
+              <button @click="editProduct(product.id)" class="edit-btn">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   class="h-4 w-4"
@@ -289,7 +273,7 @@
       </tbody>
     </table>
 
-    <div v-if="filteredProducts.length === 0" class="empty-state">
+    <div v-if="props.products.length === 0" class="empty-state">
       <svg
         class="h-12 w-12 text-gray-400"
         xmlns="http://www.w3.org/2000/svg"
@@ -427,7 +411,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 import ProductForm from "./ProductForm.vue";
 
@@ -438,49 +422,59 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["delete"]);
+const emit = defineEmits(["delete", "update-prices", "update-product"]);
 const router = useRouter();
-const searchTerm = ref("");
-const showDollarInfo = ref(false);
-const dollarPrices = ref({
-  oficial: {
-    precio: 0,
-    fechaActualizacion: "",
-  },
-  paralelo: {
-    precio: 0,
-    fechaActualizacion: "",
-  },
+const activePopover = ref(null);
+const activeEditPopover = ref(null);
+const popoverPosition = ref({ top: 0, left: 0 });
+const editingPrices = ref({
+  precio_1: 0,
+  precio_2: 0,
+  precio_3: 0,
+});
+const editingProduct = ref({
+  sku: "",
+  nombre: "",
+  descripcion: "",
+  marca: "",
+  referencia: "",
+  stock: 0,
+  costo_actual: 0,
+  precio_1: 0,
+  precio_2: 0,
+  precio_3: 0,
 });
 
 const showEditModal = ref(false);
 const selectedProduct = ref(null);
 const showAddModal = ref(false);
 
-const filteredProducts = computed(() => {
-  if (!searchTerm.value) return props.products;
+const editProduct = (product, event) => {
+  if (activeEditPopover.value === product.id) {
+    activeEditPopover.value = null;
+    return;
+  }
 
-  const term = searchTerm.value.toLowerCase();
-  return props.products.filter(
-    (product) =>
-      product.sku.toLowerCase().includes(term) ||
-      product.nombre.toLowerCase().includes(term) ||
-      (product.descripcion && product.descripcion.toLowerCase().includes(term))
-  );
-});
+  const windowWidth = window.innerWidth;
+  const windowHeight = window.innerHeight;
+  const popoverWidth = 350;
+  const popoverHeight = 600;
+
+  popoverPosition.value = {
+    top: (windowHeight - popoverHeight) / 2,
+    left: (windowWidth - popoverWidth) / 2,
+  };
+
+  editingProduct.value = { ...product };
+  activeEditPopover.value = product.id;
+};
 
 const handleSearch = () => {
   // La búsqueda se maneja automáticamente a través del computed filteredProducts
 };
 
-const editProduct = (product) => {
-  selectedProduct.value = product;
-  showEditModal.value = true;
-};
-
-const closeEditModal = () => {
-  showEditModal.value = false;
-  selectedProduct.value = null;
+const editProduct = (id) => {
+  router.push(`/editar/${id}`);
 };
 
 const confirmDelete = async (id) => {
@@ -496,76 +490,46 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
-const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleString("es-ES", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-};
-
 const stockStatusClass = (stock) => {
   if (stock <= 0) return "stock-out";
   if (stock <= 10) return "stock-low";
   return "stock-ok";
 };
 
-const calcularMargen = (precioCompra, precioVenta) => {
-  const margen = ((precioVenta - precioCompra) / precioCompra) * 100;
-  return margen.toFixed(1);
-};
-
-const margenClass = (precioCompra, precioVenta) => {
-  const margen = ((precioVenta - precioCompra) / precioCompra) * 100;
-  if (margen <= 10) return "margen-bajo";
-  if (margen <= 30) return "margen-medio";
-  return "margen-alto";
-};
-
-const fetchDollarPrices = async () => {
-  try {
-    console.log("Obteniendo precios del dólar...");
-    const response = await fetch("http://localhost:3001/dolar");
-    console.log("Respuesta recibida:", response);
-
-    if (!response.ok) {
-      throw new Error(
-        `Error al obtener los precios del dólar: ${response.status}`
-      );
-    }
-
-    const data = await response.json();
-    console.log("Datos recibidos:", data);
-
-    dollarPrices.value = {
-      oficial: {
-        precio: data.oficial.precio,
-        fechaActualizacion: data.oficial.fechaActualizacion,
-      },
-      paralelo: {
-        precio: data.paralelo.precio,
-        fechaActualizacion: data.paralelo.fechaActualizacion,
-      },
-    };
-
-    console.log("Precios actualizados:", dollarPrices.value);
-  } catch (error) {
-    console.error("Error al obtener precios del dólar:", error);
-    // Mostrar mensaje de error al usuario
-    alert(
-      "Error al obtener los precios del dólar. Por favor, intente nuevamente."
-    );
+const verPrecios = (product, event) => {
+  if (activePopover.value === product.id) {
+    activePopover.value = null;
+    return;
   }
+
+  const button = event.currentTarget;
+  const rect = button.getBoundingClientRect();
+  popoverPosition.value = {
+    top: rect.top - 10,
+    left: rect.left,
+  };
+
+  editingPrices.value = {
+    precio_1: product.precio_1,
+    precio_2: product.precio_2,
+    precio_3: product.precio_3,
+  };
+
+  activePopover.value = product.id;
 };
 
-const showDollarPrices = async () => {
-  if (!showDollarInfo.value) {
-    await fetchDollarPrices();
-  }
-  showDollarInfo.value = !showDollarInfo.value;
+const guardarPrecios = (product) => {
+  const precios = {
+    precio_1: Number(editingPrices.value.precio_1),
+    precio_2: Number(editingPrices.value.precio_2),
+    precio_3: Number(editingPrices.value.precio_3),
+  };
+
+  emit("update-prices", {
+    id: product.id,
+    precios,
+  });
+  activePopover.value = null;
 };
 
 const handleEditSubmit = async (formData) => {
@@ -628,7 +592,7 @@ const handleAddSubmit = async (formData) => {
 
 <style scoped>
 .product-table {
-  @apply overflow-x-auto rounded-lg border border-gray-200;
+  @apply overflow-x-auto rounded-lg;
 }
 
 .search-input {
@@ -656,12 +620,17 @@ tr {
 }
 
 .edit-btn,
-.delete-btn {
+.delete-btn,
+.view-prices-btn {
   @apply inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200;
 }
 
 .edit-btn {
   @apply bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+}
+
+.view-prices-btn {
+  @apply bg-green-600 hover:bg-green-700 focus:ring-green-500;
 }
 
 .delete-btn {
@@ -710,92 +679,5 @@ tr {
 
 .dollar-date {
   @apply text-xs text-gray-500 mt-2;
-}
-
-/* Estilos para el modal */
-.fixed {
-  position: fixed;
-}
-
-.inset-0 {
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
-.bg-opacity-75 {
-  background-color: rgba(0, 0, 0, 0.75);
-}
-
-.max-h-\[90vh\] {
-  max-height: 90vh;
-}
-
-.overflow-y-auto {
-  overflow-y: auto;
-}
-
-/* Estilos para el botón de cierre */
-.absolute {
-  position: absolute;
-}
-
-.top-4 {
-  top: 1rem;
-}
-
-.right-4 {
-  right: 1rem;
-}
-
-.p-3 {
-  padding: 0.75rem;
-}
-
-.rounded-full {
-  border-radius: 9999px;
-}
-
-.bg-red-100 {
-  background-color: #fee2e2;
-}
-
-.hover\:bg-red-200:hover {
-  background-color: #fecaca;
-}
-
-.text-red-600 {
-  color: #dc2626;
-}
-
-.hover\:text-red-700:hover {
-  color: #b91c1c;
-}
-
-.transition-colors {
-  transition-property: background-color, border-color, color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
-}
-
-.shadow-sm {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.flex {
-  display: flex;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.justify-center {
-  justify-content: center;
-}
-
-.add-btn {
-  @apply px-4 py-2 rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200 flex items-center;
 }
 </style>

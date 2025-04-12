@@ -9,22 +9,57 @@
           Gestiona todos tus productos desde un solo lugar
         </p>
       </div>
-      <div class="mt-4 sm:mt-0">
-        <router-link to="/agregar" class="add-button">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5 mr-2"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          Agregar Producto
-        </router-link>
+      <div class="mt-4 sm:mt-0 flex items-center space-x-4">
+        <div class="dollar-card">
+          <div class="dollar-header">
+            <span class="dollar-title">Dólar Oficial</span>
+            <span class="dollar-price">{{
+              formatPrice(dollarPrices.oficial.precio)
+            }}</span>
+          </div>
+          <div class="dollar-header">
+            <span class="dollar-title">Dólar Paralelo</span>
+            <span class="dollar-price">{{
+              formatPrice(dollarPrices.paralelo.precio)
+            }}</span>
+          </div>
+          <div class="dollar-footer">
+            <div class="dollar-date">
+              {{
+                new Date(
+                  dollarPrices.oficial.fechaActualizacion
+                ).toLocaleDateString("es-CO", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })
+              }}
+            </div>
+            <button
+              @click="loadDollarPrices"
+              class="refresh-button"
+              :disabled="loadingDollar"
+            >
+              <svg
+                class="w-4 h-4"
+                :class="{ 'animate-spin': loadingDollar }"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -149,7 +184,13 @@
         </div>
       </div>
 
-      <ProductTable v-else :products="products" @delete="handleDelete" />
+      <ProductTable
+        v-else
+        :products="products"
+        @delete="handleDelete"
+        @update-prices="handleUpdatePrices"
+        @update-product="handleUpdateProduct"
+      />
     </div>
   </div>
 </template>
@@ -164,6 +205,11 @@ const loading = ref(true);
 const error = ref(null);
 const searchTerm = ref("");
 const totalValue = ref(null);
+const dollarPrices = ref({
+  oficial: { precio: 0, fechaActualizacion: "" },
+  paralelo: { precio: 0, fechaActualizacion: "" },
+});
+const loadingDollar = ref(false);
 
 const loadProducts = async (search = "") => {
   try {
@@ -205,6 +251,28 @@ const handleDelete = async (id) => {
   }
 };
 
+const handleUpdateProduct = async (data) => {
+  try {
+    loading.value = true;
+    error.value = null;
+
+    await productService.updateProduct(data.id, data.data);
+
+    // Actualizar el producto en la lista local
+    const index = products.value.findIndex((p) => p.id === data.id);
+    if (index !== -1) {
+      products.value[index] = {
+        ...products.value[index],
+        ...data.data,
+      };
+    }
+  } catch (err) {
+    error.value = "Error al actualizar el producto: " + err.message;
+  } finally {
+    loading.value = false;
+  }
+};
+
 const formatPrice = (price) => {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
@@ -212,8 +280,23 @@ const formatPrice = (price) => {
   }).format(price);
 };
 
+const loadDollarPrices = async () => {
+  try {
+    loadingDollar.value = true;
+    const data = await productService.getDollarPrices();
+    dollarPrices.value = data;
+  } catch (error) {
+    console.error("Error al cargar el precio del dólar:", error);
+  } finally {
+    loadingDollar.value = false;
+  }
+};
+
 onMounted(() => {
   loadProducts();
+  loadDollarPrices();
+  // Actualizar el precio del dólar cada 5 minutos
+  setInterval(loadDollarPrices, 300000);
 });
 </script>
 
@@ -248,5 +331,37 @@ onMounted(() => {
 
 .empty-state {
   @apply flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 text-center;
+}
+
+.dollar-card {
+  @apply rounded-lg p-4 border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200 min-w-[200px];
+}
+
+.dollar-header {
+  @apply flex justify-between items-center mb-2;
+}
+
+.dollar-title {
+  @apply text-sm font-medium text-gray-600;
+}
+
+.dollar-price {
+  @apply text-sm font-bold text-blue-600;
+}
+
+.dollar-footer {
+  @apply flex justify-between items-center mt-2 pt-2 border-t border-gray-100;
+}
+
+.dollar-date {
+  @apply text-xs text-gray-500;
+}
+
+.refresh-button {
+  @apply p-1 rounded-full text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors duration-200;
+}
+
+.refresh-button:disabled {
+  @apply opacity-50 cursor-not-allowed;
 }
 </style>
